@@ -12,14 +12,14 @@ import (
 
 func main() {
 	// Connect to NATS
-	nc, _ := nats.Connect(nats.DefaultURL)
+	nc, _ := nats.Connect(nats.DefaultURL, nats.UserInfo("test", "test123"))
 	js, err := nc.JetStream()
 	if err != nil {
 		log.Fatal(err)
 	}
 	// Create durable consumer monitor
 	js.Subscribe("ORDERS.*", func(msg *nats.Msg) {
-		// msg.Ack()
+		msg.Ack()
 		var order model.Order
 		err := json.Unmarshal(msg.Data, &order)
 		if err != nil {
