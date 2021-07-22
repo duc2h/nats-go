@@ -10,8 +10,7 @@ jobs:
           fetch-depth: '0'
       - name: Branch name
         run: |
-          echo "running on branch ${GITHUB_REF}"
-
+          echo "running on branch ${BASE_REF}"
 
       - name: Create Release
         id: create_release
@@ -27,3 +26,13 @@ jobs:
             - Second Change
           draft: false
           prerelease: false
+      
+      - name: Get latest release
+        uses: rez0n/actions-github-release@main
+        id: node_release
+        env:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: "github.com/edarha/nats-go"
+      - name: show release
+        run: |
+          echo "value: ${steps.node_release.outputs.release}"
