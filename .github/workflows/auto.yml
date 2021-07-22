@@ -12,7 +12,3 @@ jobs:
         run: |
           echo "running on branch ${GITHUB_REF##*/}"
           
-
-  build:
-
-  deploy:
