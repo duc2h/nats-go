@@ -11,9 +11,7 @@ jobs:
       - name: Branch name
         run: |
           echo "running on branch ${GITHUB_REF}"
-        
-      - name: show github.ref
-        run: echo "${ github.ref }"
+
 
       - name: Create Release
         id: create_release
