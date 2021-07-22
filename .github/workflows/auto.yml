@@ -34,6 +34,6 @@ jobs:
 
       - name: show release
         env: 
-          RELEASE: steps.timeseries.outputs.release
+          RELEASE: ${{steps.timeseries.outputs.release}}
         run: |
           echo "value: \"${RELEASE}\""
