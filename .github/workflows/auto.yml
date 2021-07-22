@@ -33,5 +33,7 @@ jobs:
           repository: edarha/nats-go
 
       - name: show release
+        env: 
+          RELEASE: steps.timeseries.outputs.release
         run: |
-          echo "value: \"${steps.timeseries.outputs.release}\""
+          echo "value: \"${RELEASE}\""
