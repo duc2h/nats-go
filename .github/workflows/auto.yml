@@ -16,15 +16,13 @@ jobs:
         with:
           repository: edarha/nats-go
 
-      - name: Branch name
-        run: |
-          echo "running on branch ${GITHUB_REF*/}"
-
       - name: show release
         env: 
           RELEASE: ${{steps.timeseries.outputs.release}}
+          BRANCH: ${{ github.base_ref }}
         run: |
           echo "value: \"${RELEASE}\""
+          echo "branch: \"${BRANCH}\""
 
       - name: Create Release
         id: create_release
