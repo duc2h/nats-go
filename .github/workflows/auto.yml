@@ -11,22 +11,6 @@ jobs:
       # - name: Branch name
       #   run: |
       #     echo "running on branch ${GITHUB_REF}"
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name:  'test4'
-          release_name: Release 'test4'
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: false
-          prerelease: false
-      
       - id: timeseries
         uses: pozetroninc/github-action-get-latest-release@master
         with:
@@ -37,3 +21,19 @@ jobs:
           RELEASE: ${{steps.timeseries.outputs.release}}
         run: |
           echo "value: \"${RELEASE}\""
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name:  'test5'
+          release_name: Release 'test5'
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
+      
