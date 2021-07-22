@@ -19,10 +19,11 @@ jobs:
       - name: show release
         env: 
           RELEASE: ${{steps.timeseries.outputs.release}}
-          BRANCH: ${{ github.ref }}
+          BRANCH: ${{ GITHUB_REF#*/ }}
         run: |
           echo "value: \"${RELEASE}\""
-          echo "branch: \"${GITHUB_BASE_REF}\""
+          echo "branch: \"${BRANCH}\""
+
 
       - name: Create Release
         id: create_release
