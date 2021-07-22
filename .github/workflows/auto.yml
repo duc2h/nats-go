@@ -16,6 +16,10 @@ jobs:
         with:
           repository: edarha/nats-go
 
+      - name: Branch name
+        run: |
+          echo "running on branch ${GITHUB_REF*/}"
+
       - name: show release
         env: 
           RELEASE: ${{steps.timeseries.outputs.release}}
