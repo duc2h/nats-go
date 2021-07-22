@@ -16,6 +16,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: "edarha/nats-go"
+          type: "stable"
 
       - name: show release
         env: 
