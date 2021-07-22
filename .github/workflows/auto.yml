@@ -13,9 +13,10 @@ jobs:
       #     echo "running on branch ${GITHUB_REF}"
       - id: timeseries
         uses: rez0n/actions-github-release@main
-        with:
+        env:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: "edarha/nats-go"
+          type: "latest"
 
 
       - name: show release
