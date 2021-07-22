@@ -22,7 +22,7 @@ jobs:
           BRANCH: ${{ github.ref }}
         run: |
           echo "value: \"${RELEASE}\""
-          echo "branch: \"${BRANCH}\""
+          echo "branch: \"${GITHUB_BASE_REF}\""
 
       - name: Create Release
         id: create_release
