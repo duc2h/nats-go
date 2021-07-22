@@ -30,7 +30,7 @@ func main() {
 
 		fmt.Println("Reply: ", msg.Reply)
 
-		err = msg.Ack()
+		// err = msg.Ack()
 		fmt.Println(err)
 		var order model.Order
 		err := json.Unmarshal(msg.Data, &order)
@@ -40,7 +40,7 @@ func main() {
 
 		log.Printf("monitor service subscribes from subject:%s\n", msg.Subject)
 		log.Printf("OrderID:%d, CustomerID: %s, Status:%s\n", order.OrderID, order.CustomerID, order.Status)
-	}, nats.Durable("durable-queue-push3"), nats.ManualAck(), nats.MaxDeliver(5), nats.AckWait(time.Second))
+	}, nats.Durable("durable-queue-push1"), nats.ManualAck(), nats.MaxDeliver(5), nats.AckWait(time.Second))
 
 	runtime.Goexit()
 

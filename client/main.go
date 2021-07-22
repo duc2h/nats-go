@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/nats-io/nats.go"
 
@@ -12,14 +13,23 @@ import (
 )
 
 const (
-	streamName     = "ORDERS"
-	streamSubjects = "ORDERS.*"
-	subjectName    = "ORDERS.created"
+	streamName     = "student"
+	streamSubjects = "student.*"
+	subjectName    = "student.Created"
 )
 
 func main() {
 	// Connect to NATS
-	nc, _ := nats.Connect(nats.DefaultURL, nats.UserInfo("test", "test123"))
+	opt, err := nats.NkeyOptionFromSeed("../nkey-cert.yaml")
+	if err != nil {
+		log.Fatalln("error nkey: ", err)
+	}
+	nc, err := nats.Connect("nats://localhost:4223", opt)
+
+	if err != nil {
+		log.Fatal("connect err: ", err)
+	}
+	fmt.Println("nc--- ", nc.Status())
 	// Creates JetStreamContext
 	js, err := nc.JetStream()
 	fmt.Println(err)
@@ -36,7 +46,7 @@ func main() {
 // with subject "ORDERS.created"
 func createOrder(js nats.JetStreamContext) error {
 	var order model.Order
-	for i := 1; i <= 10; i++ {
+	for i := 1; i <= 3; i++ {
 		order = model.Order{
 			OrderID:    i,
 			CustomerID: "Cust-" + strconv.Itoa(i),
@@ -56,14 +66,17 @@ func createOrder(js nats.JetStreamContext) error {
 func createStream(js nats.JetStreamContext) error {
 	// Check if the ORDERS stream already exists; if not, create it.
 	stream, err := js.StreamInfo(streamName)
+	fmt.Println("stream: ", stream)
 	if err != nil {
 		log.Println(err)
 	}
 	if stream == nil {
 		log.Printf("creating stream %q and subjects %q", streamName, streamSubjects)
 		_, err = js.AddStream(&nats.StreamConfig{
-			Name:     streamName,
-			Subjects: []string{streamSubjects},
+			Name:      streamName,
+			Subjects:  []string{streamSubjects},
+			Retention: nats.InterestPolicy,
+			MaxAge:    time.Minute * 10000,
 		})
 		if err != nil {
 			return err
@@ -74,6 +87,6 @@ func createStream(js nats.JetStreamContext) error {
 
 func checkErr(err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("check error: ", err)
 	}
 }
