@@ -18,8 +18,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ "test1" }}
+          release_name: Release ${{ "test1" }}
           body: |
             Changes in this Release
             - First Change
@@ -27,12 +27,11 @@ jobs:
           draft: false
           prerelease: false
       
-      - name: Get latest release
-        uses: rez0n/actions-github-release@main
-        id: node_release
-        env:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: "github.com/edarha/nats-go"
+      - id: timeseries
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: edarha/nats-go
+
       - name: show release
         run: |
-          echo "value: ${steps.node_release.outputs.release}"
+          echo "value: ${steps.timeseries.outputs.release}"
