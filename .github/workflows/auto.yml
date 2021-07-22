@@ -10,7 +10,7 @@ jobs:
           fetch-depth: '0'
       - name: Branch name
         run: |
-          echo "running on branch ${BASE_REF}"
+          echo "running on branch ${GITHUB_REF}"
 
       - name: Create Release
         id: create_release
