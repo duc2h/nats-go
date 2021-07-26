@@ -35,6 +35,8 @@ jobs:
             echo "value of environment: ${branch[@]}"
           } 
 
+          get_environment
+
 
       - name: Create Release
         id: create_release
