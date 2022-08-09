@@ -11,6 +11,14 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
+const (
+	stream  = "stream1"
+	durable = "durable1"
+	queue   = "queue1"
+	subject = "subject1"
+	deliver = "deliver1"
+)
+
 func main() {
 	// Connect to NATS
 	opt, err := nats.NkeyOptionFromSeed("../nkey-cert.yaml")
@@ -18,8 +26,14 @@ func main() {
 		log.Fatalln("error nkey: ", err)
 	}
 	nc, err := nats.Connect("nats://localhost:4223", opt)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	js, err := nc.JetStream()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	t := time.Now()
 	fmt.Println(t)
@@ -29,14 +43,6 @@ func main() {
 
 	runtime.Goexit()
 }
-
-const (
-	stream  = "stream1"
-	durable = "durable1"
-	queue   = "queue1"
-	subject = "subject1"
-	deliver = "deliver1"
-)
 
 // create stream
 func createStream(js nats.JetStreamContext) {
@@ -66,7 +72,6 @@ func createStream(js nats.JetStreamContext) {
 func createConsumer(js nats.JetStreamContext, now time.Time) {
 	info, _ := js.ConsumerInfo(stream, durable)
 	if info != nil {
-		fmt.Println(info.Config.OptStartTime)
 		js.DeleteConsumer(stream, durable)
 	}
 
@@ -76,9 +81,9 @@ func createConsumer(js nats.JetStreamContext, now time.Time) {
 		MaxDeliver:     5,
 		DeliverSubject: deliver,
 		AckWait:        time.Second,
-		DeliverPolicy:  nats.DeliverByStartTimePolicy,
-		OptStartTime:   &now,
+		DeliverPolicy:  nats.DeliverNewPolicy,
 		DeliverGroup:   queue,
+		AckPolicy:      nats.AckExplicitPolicy,
 	}
 	_, err := js.AddConsumer(stream, &cfg)
 	if err != nil {
@@ -91,25 +96,21 @@ func createConsumer(js nats.JetStreamContext, now time.Time) {
 // register queue-subscribe
 func createSub(js nats.JetStreamContext, now time.Time) {
 	_, err := js.QueueSubscribe(subject, queue, func(msg *nats.Msg) {
-
-		fmt.Println("Reply: ", msg.Reply)
-
-		err := msg.Ack()
-		fmt.Println(err)
 		var order model.Order
-		err = json.Unmarshal(msg.Data, &order)
+		err := json.Unmarshal(msg.Data, &order)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		log.Printf("monitor service subscribes from subject:%s\n", msg.Subject)
 		log.Printf("OrderID:%d, CustomerID: %s, Status:%s\n", order.OrderID, order.CustomerID, order.Status)
+		msg.Ack()
 
 	}, nats.Bind(stream, durable),
-		nats.ManualAck(), nats.MaxDeliver(5),
-		nats.DeliverSubject(subject),
+		nats.ManualAck(),
+		nats.MaxDeliver(5),
+		nats.DeliverSubject(deliver),
 		nats.AckWait(time.Second),
-		nats.StartTime(now),
 	)
 
 	if err != nil {

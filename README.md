@@ -25,3 +25,11 @@ It have some concept like nats-streaming, but it's better with the capabilities 
 
 ### Pull based consumer and Push based consumer
 * Jetstream provides two kind of consumer (subcriber) systems: Pull based consumer and Push based consumer. The Pull based consumer let jetstream pull the messages from consumer systems. Pull based consumer systems are like work queues. Because the jetstream provides a ACK(acknowledment) mechansim, you can easily scale Pull based consumer systems horizontally without the problem of duplication of messages. Pull based subcription is new to the Nats ecosystem. The Push based consumer let jetstream pushing the messages to consumer systems. Which can be a good choice for monitoring systems. Docs: https://docs.nats.io/jetstream/concepts
+
+
+### How to tracing nats-jetstream
+We use `nats-box` to trace nats-jetstream, run docker to start nats-box:
+`docker run --rm --network host -it natsio/nats-box:latest`
+
+Then, connecting to nats server:
+`nats context save s1 --user=admin --password=admin --server=nats://127.0.0.1:4223 --select`
